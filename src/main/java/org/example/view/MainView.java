@@ -29,7 +29,7 @@ public class MainView extends JFrame {
   private final JTextArea textArea = new JTextArea();
 
   public MainView() {
-    setTitle("Java Text Editor");
+    setTitle("Untitled - Java Text Editor");
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     setSize(800, 600);
     setLocationRelativeTo(null);
@@ -56,16 +56,16 @@ public class MainView extends JFrame {
   private void renderFileMenuBar() {
     JMenu menu = new JMenu("File");
 
-    menuFileNew.setEnabled(false);
-    menuFileOpen.setEnabled(false);
-    menuFileSave.setEnabled(false);
-    menuFileSaveAs.setEnabled(false);
+    menuFileNew.setAccelerator(KeyStroke.getKeyStroke("control N"));
+    menuFileOpen.setAccelerator(KeyStroke.getKeyStroke("control O"));
+    menuFileSave.setAccelerator(KeyStroke.getKeyStroke("control S"));
+    menuFileSaveAs.setAccelerator(KeyStroke.getKeyStroke("control shift S"));
 
-//    menu.add(menuFileNew);
-//    menu.add(menuFileOpen);
-//    menu.add(menuFileSave);
-//    menu.add(menuFileSaveAs);
-    //menu.addSeparator();
+    menu.add(menuFileNew);
+    menu.add(menuFileOpen);
+    menu.add(menuFileSave);
+    menu.add(menuFileSaveAs);
+    menu.addSeparator();
     menu.add(menuFileExit);
 
     menuBar.add(menu);
@@ -95,6 +95,7 @@ public class MainView extends JFrame {
   private void renderViewMenuBar() {
     JMenu menu = new JMenu("View");
 
+    menuViewWrapText.setSelected(false);
     menu.add(menuViewWrapText);
 
     menuBar.add(menu);
@@ -108,6 +109,18 @@ public class MainView extends JFrame {
     menu.add(menuHelpAbout);
 
     //menuBar.add(menu);
+  }
+
+  public JMenuItem menuFileNew() {
+    return menuFileNew;
+  }
+
+  public JMenuItem menuFileSave() {
+    return menuFileSave;
+  }
+
+  public JMenuItem menuFileOpen() {
+    return menuFileOpen;
   }
 
   public JMenuItem menuFileExit() {
@@ -143,5 +156,9 @@ public class MainView extends JFrame {
     menuItems.put("HelpAbout", menuHelpAbout);
 
     return menuItems;
+  }
+
+  public JMenuItem menuFileSaveAs() {
+    return menuFileSaveAs;
   }
 }
