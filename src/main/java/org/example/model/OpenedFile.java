@@ -7,7 +7,9 @@ import java.io.IOException;
 
 public class OpenedFile {
 
-  String name, path, originalText;
+  final String name;
+  final String path;
+  String originalText;
 
   public OpenedFile(String name, String path, String originalText) {
     this.name = name == null ? "" : name;
@@ -16,7 +18,7 @@ public class OpenedFile {
   }
 
   public boolean isNewFile() {
-    return path == null || path.isEmpty();
+    return path.isEmpty();
   }
 
   public static String getStringFromFileContent(File selectedFile) throws IOException {

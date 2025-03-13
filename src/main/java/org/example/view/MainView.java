@@ -1,65 +1,65 @@
 package org.example.view;
 
+import org.example.view.tabPolicy.MainFocusTraversalPolicy;
+
 import javax.swing.*;
+import javax.swing.text.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainView extends JFrame {
 
+  private final JTextArea textArea = new JTextArea();
+
+  // ----------------------------------- Search -----------------------------------
+  private final JPanel searchPanel = new JPanel();
+  private final JTextField txtSearch = new JTextField();
+  private final JCheckBox cbCaseSensitive = new JCheckBox("Case Sensitive");
+  private final JLabel lblOccurrences = new JLabel("0/0");
+  private final JButton btnCloseSearch = new JButton("X");
+
+  // -----------------------------------  Menu -----------------------------------
   private final JMenuBar menuBar = new JMenuBar();
 
-  private final JMenuItem menuFileNew = new JMenuItem("New");
-  private final JMenuItem menuFileOpen = new JMenuItem("Open");
-  private final JMenuItem menuFileSave = new JMenuItem("Save");
-  private final JMenuItem menuFileSaveAs = new JMenuItem("Save As");
+  // -------------------------------- File Menu --------------------------------
+  private final JMenuItem menuFileNew = createMenuItem("New", "control N");
+  private final JMenuItem menuFileOpen = createMenuItem("Open", "control O");
+  private final JMenuItem menuFileSave = createMenuItem("Save", "control S");
+  private final JMenuItem menuFileSaveAs = createMenuItem("Save As", "control shift S");
   private final JMenuItem menuFileExit = new JMenuItem("Exit");
 
-  private final JMenuItem menuEditUndo = new JMenuItem("Undo");
-  private final JMenuItem menuEditRedo = new JMenuItem("Redo");
-  private final JMenuItem menuEditCut = new JMenuItem("Cut");
-  private final JMenuItem menuEditCopy = new JMenuItem("Copy");
-  private final JMenuItem menuEditPaste = new JMenuItem("Paste");
-  private final JMenuItem menuEditSelAll = new JMenuItem("Select All");
+  // -------------------------------- Edit Menu --------------------------------
+  private final JMenuItem menuEditUndo = createMenuItem("Undo", "control Z");
+  private final JMenuItem menuEditRedo = createMenuItem("Redo", "control Y");
+  private final JMenuItem menuEditCut = createMenuItem("Cut", "control X");
+  private final JMenuItem menuEditCopy = createMenuItem("Copy", "control C");
+  private final JMenuItem menuEditPaste = createMenuItem("Paste", "control V");
+  private final JMenuItem menuEditSelAll = createMenuItem("Select All", "control A");
+  private final JMenuItem menuEditDelete = createMenuItem("Delete", "DELETE");
+  private final JMenuItem menuEditSearch = createMenuItem("Search", "control F");
 
+  // -------------------------------- View Menu --------------------------------
   private final JCheckBoxMenuItem menuViewWrapText = new JCheckBoxMenuItem("Wrap Text");
 
+  // -------------------------------- Help Menu --------------------------------
   private final JMenuItem menuHelpAbout = new JMenuItem("About");
-
-  private final JTextArea textArea = new JTextArea();
 
   public MainView() {
     setTitle("Untitled - Java Text Editor");
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-    setSize(800, 600);
+    setSize(ViewConstants.APP_WIDTH, ViewConstants.APP_HEIGHT);
     setLocationRelativeTo(null);
+    setLayout(new BorderLayout());
 
     setJMenuBar(menuBar);
-
     renderFileMenuBar();
     renderEditMenuBar();
     renderViewMenuBar();
     renderHelpMenuBar();
-
     renderContent();
-
-    setVisible(true);
-  }
-
-  private void renderContent() {
-    JScrollPane scrollPane = new JScrollPane(textArea);
-
-    setLayout(new BorderLayout());
-    add(scrollPane, BorderLayout.CENTER);
   }
 
   private void renderFileMenuBar() {
     JMenu menu = new JMenu("File");
-
-    menuFileNew.setAccelerator(KeyStroke.getKeyStroke("control N"));
-    menuFileOpen.setAccelerator(KeyStroke.getKeyStroke("control O"));
-    menuFileSave.setAccelerator(KeyStroke.getKeyStroke("control S"));
-    menuFileSaveAs.setAccelerator(KeyStroke.getKeyStroke("control shift S"));
 
     menu.add(menuFileNew);
     menu.add(menuFileOpen);
@@ -74,91 +74,153 @@ public class MainView extends JFrame {
   private void renderEditMenuBar() {
     JMenu menu = new JMenu("Edit");
 
-    menuEditUndo.setEnabled(false);
-    menuEditRedo.setEnabled(false);
     menuEditCut.setEnabled(false);
     menuEditCopy.setEnabled(false);
-    menuEditPaste.setEnabled(false);
-    menuEditSelAll.setEnabled(false);
+    menuEditDelete.setEnabled(false);
 
-//    menu.add(menuEditUndo);
-//    menu.add(menuEditRedo);
-//    menu.addSeparator();
-//    menu.add(menuEditCut);
-//    menu.add(menuEditCopy);
-//    menu.add(menuEditPaste);
-//    menu.add(menuEditSelAll);
+    menu.add(menuEditUndo);
+    menu.add(menuEditRedo);
+    menu.addSeparator();
+    menu.add(menuEditCut);
+    menu.add(menuEditCopy);
+    menu.add(menuEditPaste);
+    menu.add(menuEditSelAll);
+    menu.add(menuEditDelete);
+    menu.addSeparator();
+    menu.add(menuEditSearch);
 
-    //menuBar.add(menu);
+    menuBar.add(menu);
   }
 
   private void renderViewMenuBar() {
     JMenu menu = new JMenu("View");
-
     menuViewWrapText.setSelected(false);
+    menuViewWrapText.setAccelerator(KeyStroke.getKeyStroke("alt Z"));
     menu.add(menuViewWrapText);
-
     menuBar.add(menu);
   }
 
   private void renderHelpMenuBar() {
     JMenu menu = new JMenu("Help");
-
-    menuHelpAbout.setEnabled(false);
-
     menu.add(menuHelpAbout);
-
-    //menuBar.add(menu);
+    menuBar.add(menu);
   }
 
-  public JMenuItem menuFileNew() {
-    return menuFileNew;
-  }
+  private void renderContent() {
+    searchPanel.setLayout(new BorderLayout());
 
-  public JMenuItem menuFileSave() {
-    return menuFileSave;
-  }
+    JPanel eastPanel = new JPanel(new BorderLayout());
+    JLabel lblSearch = new JLabel("Search:");
 
-  public JMenuItem menuFileOpen() {
-    return menuFileOpen;
-  }
+    cbCaseSensitive.setSelected(false);
 
-  public JMenuItem menuFileExit() {
-    return menuFileExit;
-  }
+    eastPanel.add(lblOccurrences, BorderLayout.WEST);
+    eastPanel.add(cbCaseSensitive, BorderLayout.CENTER);
+    eastPanel.add(btnCloseSearch, BorderLayout.EAST);
 
-  public JCheckBoxMenuItem menuViewWrapText() {
-    return menuViewWrapText;
+    searchPanel.add(lblSearch, BorderLayout.WEST);
+    searchPanel.add(txtSearch, BorderLayout.CENTER);
+    searchPanel.add(eastPanel, BorderLayout.EAST);
+
+    setFocusTraversalPolicy(new MainFocusTraversalPolicy(txtSearch, cbCaseSensitive, btnCloseSearch, textArea));
+
+    add(new JScrollPane(textArea), BorderLayout.CENTER);
   }
 
   public JTextArea textArea() {
     return textArea;
   }
 
-  public Map<String, JMenuItem> getMenuItems() {
-    Map<String, JMenuItem> menuItems = new HashMap<>();
+  // ----------------------------------- Search -----------------------------------
+  public JPanel searchPanel() {
+    return searchPanel;
+  }
 
-    menuItems.put("FileNew", menuFileNew);
-    menuItems.put("FileOpen", menuFileOpen);
-    menuItems.put("FileSave", menuFileSave);
-    menuItems.put("FileSaveAs", menuFileSaveAs);
-    menuItems.put("FileExit", menuFileExit);
+  public JTextField txtSearch() {
+    return txtSearch;
+  }
 
-    menuItems.put("ViewWrapText", menuViewWrapText);
+  public JCheckBox cbCaseSensitive() {
+    return cbCaseSensitive;
+  }
 
-    menuItems.put("EditUndo", menuEditUndo);
-    menuItems.put("EditRedo", menuEditRedo);
-    menuItems.put("EditCut", menuEditCut);
-    menuItems.put("EditCopy", menuEditCopy);
-    menuItems.put("EditPaste", menuEditPaste);
-    menuItems.put("EditSelectAll", menuEditSelAll);
+  public void setOccurrences(int number, int total) {
+    String text = number + "/" + total;
+    lblOccurrences.setText(text);
+  }
 
-    menuItems.put("HelpAbout", menuHelpAbout);
+  public JButton btnCloseSearch() {
+    return btnCloseSearch;
+  }
 
-    return menuItems;
+  // -------------------------------- File Menu --------------------------------
+  public JMenuItem menuFileNew() {
+    return menuFileNew;
+  }
+
+  public JMenuItem menuFileOpen() {
+    return menuFileOpen;
+  }
+
+  public JMenuItem menuFileSave() {
+    return menuFileSave;
   }
 
   public JMenuItem menuFileSaveAs() {
     return menuFileSaveAs;
+  }
+
+  public JMenuItem menuFileExit() {
+    return menuFileExit;
+  }
+
+  // -------------------------------- Edit Menu --------------------------------
+  public JMenuItem menuEditUndo() {
+    return menuEditUndo;
+  }
+
+  public JMenuItem menuEditRedo() {
+    return menuEditRedo;
+  }
+
+  public JMenuItem menuEditCut() {
+    return menuEditCut;
+  }
+
+  public JMenuItem menuEditCopy() {
+    return menuEditCopy;
+  }
+
+  public JMenuItem menuEditPaste() {
+    return menuEditPaste;
+  }
+
+  public JMenuItem menuEditSelAll() {
+    return menuEditSelAll;
+  }
+
+  public JMenuItem menuEditDelete() {
+    return menuEditDelete;
+  }
+
+  public JMenuItem menuEditSearch() {
+    return menuEditSearch;
+  }
+
+  // -------------------------------- View Menu --------------------------------
+  public JCheckBoxMenuItem menuViewWrapText() {
+    return menuViewWrapText;
+  }
+
+  // -------------------------------- Help Menu --------------------------------
+  public JMenuItem menuHelpAbout() {
+    return menuHelpAbout;
+  }
+
+  // -------------------------------- Helpers --------------------------------
+  private JMenuItem createMenuItem(String text, String accelerator) {
+    JMenuItem menuItem = new JMenuItem(text);
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(accelerator));
+    return menuItem;
   }
 }
